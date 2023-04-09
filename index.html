@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여행중독테스트</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/514fec19c7.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="container">
+  <!-- 초기 화면 -->
+  <article class="start">
+    <h1 class="mt-5 text-center"><i class="fa-solid fa-plane fa-beat"></i>&nbsp;지금 떠나야할까? 여행<span>중독</span>테스트</h1>
+    <button type="button" class="btn btn-primary mt-5" onclick="start();">START TEST</button>
+  </article>
+
+  <!-- 질문 화면 -->
+  <article class="question">
+    <div class="progress mt-5" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0"
+      aria-valuemax="100">
+      <div class="progress-bar" style="width: calc(100/12*1%)"></div>
+    </div>
+    <h2 id="title" class="text-center mt-5">문제</h2>
+    <p id="question-text" class="text-center"></p>
+    <input id="type" type="hidden" value="YN">
+    <button id="Y" type="button" class="btn btn-primary mt-5">Primary</button>
+    <button id="N" type="button" class="btn btn-primary mt-5">Primary</button>
+  </article>
+
+  <!-- 결과 화면 -->
+  <article class="result">
+    <img id="img" class="rounded-circle mt-5" src="img/normal.jpg" alt="">
+    <br>
+    <h4 id="score" class="text-center">점수</h4>
+    <h2 id="category" class="text-center mt-3">카테고리</h2>
+    <h3 id="explain" class="text-center mt-2">설명</h3>
+  </article>
+  <input type="hidden" id="YN" value="0">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+    crossorigin="anonymous"></script>
+
+  <script>
+    let num = 1;
+    let q = {
+      1: { 'title': '문제 1번', 'question-text': '주변에 자주 "여행가고 싶다"고 말하고 다닌다.', 'type': 'YN', "Y": "YES, 이 말을 평소에 자주한다.", "N": 'NO, 안그래도 피곤한데 그 말하는게 더 피곤하다.' },
+      2: { 'title': '문제 2번', 'question-text': '당장 가고 싶은 여행지가 있다.', 'type': 'YN', "Y": "YES, 이미 그곳에서 하고 싶은 것도 있다.", "N": 'NO, 당장은 없다. 우리 집이 최고다.' },
+      3: { 'title': '문제 3번', 'question-text': '가끔 심심하면 네이버/스카이스캐너 등을 이용해서 항공권 가격을 알아본다.', 'type': 'YN', "Y": "YES, 가격보고 괜찮으면 괜히 기분 좋아진다.", "N": 'NO, 귀찮다. 아직 가는 것도 아닌데 굳이 찾아보지 않는다.' },
+      4: { 'title': '문제 4번', 'question-text': '주 1회 이상 빠니보틀/곽튜브 등 여행 유튜버를 구독해서 보고있다.', 'type': 'YN', "Y": "YES, 여행 유튜브 보면서 대리 설렘느낀다. ", "N": 'NO, 여행말고 다른 볼 것이 더 많다.' },
+      5: { 'title': '문제 5번', 'question-text': '가끔 심심할 때 여행 갔던 곳 사진을 찾아보면서 그 당시를 추억한다.', 'type': 'YN', "Y": "YES, 사진만 보면 그 당시 기억에 행복하다.", "N": 'NO, 그때 사진은 거의 보지 않는다.' },
+      6: { 'title': '문제 6번', 'question-text': '휴가일정이 나오면 떠날 곳 먼저 생각하는 편이다.', 'type': 'YN', "Y": "YES, 여행할 수 있는 절호의 기회이다.", "N": 'NO, 진정한 휴가는 집에서 쉬는 것이다.' },
+      7: { 'title': '문제 7번', 'question-text': '여행이야기를 하는 것만으로도 설레고 즐겁다.', 'type': 'YN', "Y": "YES, 주변사람들과 여행이야기만 해도 이미 내 입꼬리는 올라가 있다.", "N": 'NO, 여행이야기에 설레지 않거나, 여행말고 다른 이야기에 더 설렌다.' },
+      8: { 'title': '문제 8번', 'question-text': '여행 가는데 회사나 학교 등 현 상황이 방해된다고 생각한다.', 'type': 'YN', "Y": "YES, 회사 다니다보니 여행일정 빼기가 쉽지 않다.", "N": 'NO, 회사를 다녀도 여행에 지장없고, 방해는 되지않는다.' },
+      9: { 'title': '문제 9번', 'question-text': '여행 끝나고 돌아오는 길에 다른 여행을 기약한다.', 'type': 'YN', "Y": "YES, 여행의 끝은 다음 여행지 선택으로 다시 시작된다.", "N": 'NO, 이번 여행 후는 나중에 생각한다.' },
+      10: { 'title': '문제 10번', 'question-text': '1년에 (국내여행: 3번 이상 or 해외여행: 1번 이상) 못 가면 답답해서 미칠 것 같다.', 'type': 'YN', "Y": "YES, 입에 가시가 돋칠 것 같다.", "N": 'NO, 여행을 많이 하지 않아도 괜찮다.' },
+      11: { 'title': '문제 11번', 'question-text': '경제적 자유를 얻으면 하는 일을 잠시 관두고 여행 다닐 생각이 있다.', 'type': 'YN', "Y": "YES, 하루라도 젊을 때 이곳 저곳 돌아다녀야한다.", "N": 'NO, 돈이 생겨도 원래대로 하던 일을 하거나, 관둔다하더라도 여행대신 다른 일을 할 것이다.' },
+      12: { 'title': '문제 12번', 'question-text': '여행을 좋아하지 않는 이성과는 미래를 함께 하기 어렵다고 생각한다.', 'type': 'YN', "Y": "YES, 상대가 여행을 싫어한다고 하면 장기적으로 힘들 것같다.", "N": 'NO, 상관없다. 나 혼자 여행다니거나 같이 여행을 안해도 된다.' },
+    }
+
+    let result = {
+      '일반인': { 'category': '현재상태: 여행없이도 일상에 문제가 없는 단계', 'explain': '어디에 떠나기보다는 현재의 삶에 만족하시는 편입니다. 일상을 지금처럼 즐기시는게 좋아보입니다.', 'img': 'img/normal.jpg' },
+      '초기': { 'category': '현재상태: 여행병 초기', 'explain': '약간의 휴식이 필요해보입니다. 하지만 당장 떠나지 않아도 큰 문제는 없습니다. 차근 차근 먼 미래 여행계획을 세워보는게 어떨까요? ', 'img': 'img/initial.jpg' },
+      '경증': { 'category': '현재상태: 여행병 중기', 'explain': '여행 중독자 구간에 들어오셨습니다. 한달 내로 여행계획을 세워 떠나시기를 권해드립니다.', 'img': 'img/middle.jpg' },
+      '말기': { 'category': '현재상태: 여행병 말기', 'explain': '3일 이내 당장 떠나세요. 병을 치료하기 위해서 당장 떠나서야 합니다! ', 'img': 'img/late.jpg' },
+    }
+
+    function start() {
+      $('.start').hide();
+      $('.question').show();
+      next();
+    }
+
+    $('#Y').click(function () {
+      let preValue = $('#YN').val();
+      $('#YN').val(parseInt(preValue) + 1);
+      next();
+    });
+    $('#N').click(function () {
+      next();
+    });
+
+    function next() {
+      if (num == 13) {
+        $(".question").hide();
+        $('.result').show();
+        let state = '';
+        let score = parseInt($('#YN').val()); // 이 구간이 무슨말인지 모르겟
+        if (score === 12) {
+          state = '말기';
+        } else if (score < 12 && score >= 8) {
+          state = '경증';
+        } else if (score < 8 && score >= 5) {
+          state = '초기';
+        } else {
+          state = '일반인';
+        }
+        alert('응답완료! 결과를 확인하시겠습니까?');
+        $('#score').html(`총점: ${score}점/12점`);
+        $('#img').attr('src', result[state]['img']);
+        $('#category').html(result[state]['category']);
+        $('#explain').html(result[state]['explain']);
+      } else {
+        $('.progress-bar').attr('style', 'width: calc(100/12*' + num + '%)');
+        $('#title').html(q[num]['title']);
+        $('#question-text').html(q[num]['question-text']);
+        $('#type').val(q[num]['type']);
+        $('#Y').html(q[num]["Y"]);
+        $('#N').html(q[num]["N"]);
+        num++;
+      }
+    }
+  </script>
+</body>
+
+</html>
